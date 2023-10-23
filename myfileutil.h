@@ -63,7 +63,7 @@ int saveAndAppendTransactions(struct TransactionRecord a_record)
 {
     FILE *fp;
     fp = fopen("transactions_dat", "a+");
-    fprintf(fp, "%d|%s|%s|%c|%.2lf|%s|%s\n",
+    fprintf(fp, "%d|%s|%s|%c|%.2lf|%s|%s|\n",
             getKeyValueAndIncrementNSave("TRANSACTION_KEY"),
             a_record.date,
             a_record.description,
@@ -199,6 +199,24 @@ char *_checkCatgoryOrMember(char *input, char *fileName, char *errorMessage)
     }
     return a;
 }
+char *_safelyReturnMemberOrCategory(char *file, char *prompt1, char *prompt2, char *error)
+{
+    _printAllCategoriesOrMembers(file, prompt1);
+    printf("\n");
+    char enteredMember[50];
+    char *tempSelectedVal;
+    do
+    {
+        printf(prompt2);
+        gets(enteredMember);
+        // Remove the trailing newline character from the user input
+        enteredMember[strcspn(enteredMember, "\n")] = '\0';
+
+        tempSelectedVal = _checkCatgoryOrMember(enteredMember, file, error);
+
+    } while (tempSelectedVal == "NOT_FOUND");
+    return tempSelectedVal;
+}
 
 int acceptDataForNewTransaction()
 {
@@ -216,7 +234,6 @@ int acceptDataForNewTransaction()
 
     char amountString[20];
     char enteredCategory[50];
-    char enteredMember[50];
 
     do
     {
@@ -242,33 +259,24 @@ int acceptDataForNewTransaction()
         record.amount = strtod(amountString, NULL);
     } while (!_checkAmountGtZero(record.amount, "Transaction should be more than zero"));
 
-    _printAllCategoriesOrMembers("category_dat", "\nNo|Category Name\n");
-    printf("\n");
+    // _printAllCategoriesOrMembers("category_dat", "\nNo|Category Name\n");
+    // printf("\n");
 
-    do
-    {
-        printf("Enter category No : ");
-        gets(enteredCategory);
-        // Remove the trailing newline character from the user input
-        enteredCategory[strcspn(enteredCategory, "\n")] = '\0';
-        tempSelectedVal = _checkCatgoryOrMember(enteredCategory, "category_dat", "Enter a valid category No\n");
+    // do
+    // {
+    //     printf("Enter category No : ");
+    //     gets(enteredCategory);
+    //     // Remove the trailing newline character from the user input
+    //     enteredCategory[strcspn(enteredCategory, "\n")] = '\0';
+    //     tempSelectedVal = _checkCatgoryOrMember(enteredCategory, "category_dat", "Enter a valid category No\n");
 
-    } while (tempSelectedVal == "NOT_FOUND");
+    // } while (tempSelectedVal == "NOT_FOUND");
+    tempSelectedVal = _safelyReturnMemberOrCategory("category_dat", "\nNo|Category Name\n", "Enter category No : ", "Enter a valid category No\n");
+
     sscanf(tempSelectedVal, "%s", record.category_name);
     printf("Category selected:%s\n", record.category_name);
 
-    _printAllCategoriesOrMembers("member_dat", "\nNo|Member Name\n");
-
-    do
-    {
-        printf("Enter Member No : ");
-        gets(enteredMember);
-        // Remove the trailing newline character from the user input
-        enteredMember[strcspn(enteredMember, "\n")] = '\0';
-
-        tempSelectedVal = _checkCatgoryOrMember(enteredMember, "member_dat", "Enter a valid member No\n");
-
-    } while (tempSelectedVal == "NOT_FOUND");
+    tempSelectedVal = _safelyReturnMemberOrCategory("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n");
     sscanf(tempSelectedVal, "%s", record.member_name);
 
     printf("Member selected:%s\n", record.member_name);
@@ -296,5 +304,56 @@ int acceptNewMemberOrCategoryData(char *label, char *file, char *keyFileName)
     printf(label);
     gets(record.name);
     appendNewMemberOrCategory(file, keyFileName, record);
+    return 0;
+}
+
+int deleteMemberOrCategory(char *file, char *prompt1, char *prompt2, char *error)
+{
+    int deletedCount = 0, count = 0;
+
+    char *tempSelectedVal = _safelyReturnMemberOrCategory(file, prompt1, prompt2, error);
+    // temp selected value could be  either the membername or category name.
+    char selectedName[50];
+    sscanf(tempSelectedVal, "%255[^\n]", selectedName);
+
+    printf("\nAre you sure the remove %s (Y/N) ?", selectedName);
+    char yn = 'y';
+    yn = getche();
+    if (yn == 'y' || yn == 'Y')
+    {
+
+        FILE *fp_input, *fp_output;
+        fp_input = fopen(file, "r");
+        fp_output = fopen("temp", "w");
+        char line[1000];
+        while (fgets(line, sizeof(line), fp_input))
+        {
+            int no = 0;
+            char name[50];
+            sscanf(line, "%d|%255[^\n]", &no, name);
+            printf("Name:%s\n", name);
+            printf("SelectedName:%s\n", selectedName);
+            if (strcmp(name, selectedName) != 0) // this has to be string compare
+            {
+                fprintf(fp_output, "%d|%s\n",
+                        ++count,
+                        name);
+            }
+            else
+            {
+                deletedCount++;
+            }
+        }
+        fclose(fp_input);
+        fclose(fp_output);
+        // Delete the original file
+        remove(file);
+        rename("temp", file);
+    }
+    else
+    {
+        deletedCount = -1;
+    }
+    printf(" Deleted %d record(s)\n", deletedCount);
     return 0;
 }

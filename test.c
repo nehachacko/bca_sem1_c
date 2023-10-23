@@ -83,9 +83,17 @@ int main_menu_with_loop()
             print_menu();
             break;
         case '7':
+            printf("Here11");
+            deleteMemberOrCategory("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n");
+
+            print_menu();
             break;
         case '8':
             acceptNewMemberOrCategoryData("Category name :", "category_dat", "CATEGORY_KEY");
+            print_menu();
+            break;
+        case '9':
+            deleteMemberOrCategory("category_dat", "\nNo|Category Name\n", "Enter Category No : ", "Enter a valid Category No\n");
             print_menu();
             break;
         default:
