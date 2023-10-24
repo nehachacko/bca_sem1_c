@@ -1,39 +1,17 @@
 #include <stdio.h>
 #include <conio.h>
 #include "myfileutil.h"
-/**
- *  struct TransactionRecord sample1;
-    sample1.amount=4444.94;
-    sample1.date = "10-10-2023";
-    sample1.description= "test description";
-    sample1.income_expense="I";
-    sample1.category_id=2;
-    sample1.member_id=1;
-    saveAndAppendTransactions(sample1);
-
-    struct member_record sample2;
-    sample2.member_name="Nethan";
-    append_to_member_record(sample2);
-
-    struct category_record sample3;
-    sample3.category_name="Groceries";
-    append_to_category_record(sample3);
-
-
-    //printf("hello word %d",getKeyValueAndIncrementNSave("MEMBER.KEY"));
-    //printf("hello word %d",getKeyValueAndIncrementNSave("TRANSACTION.KEY"));
-
-*/
 
 int print_menu(int flag)
 {
-    if (flag == 1)
+    // prints menu
+    if (flag == 1) // if flag is 1,at the end of the screen a message is printed to press any key to continue
     {
         printf("Please any key to continue....");
         getch();
     }
 
-    system("cls");
+    system("cls"); // clears screen before printing the menu
     printf("\n%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",
            201, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 187);
 
@@ -70,59 +48,59 @@ int main_menu_with_loop()
     int a = 0;
     do
     {
-        a = getch();
+        a = getch(); // inputs which operation is to be performed
         switch (a)
         {
-        case '1':
-            system("cls");
+        case '1':          // to enter a new transaction
+            system("cls"); // clears screen and starts by printing the message given below
             printf("==========NEW TRANSACTION ENTRY==========\n\n");
             acceptDataForNewTransaction();
             print_menu(1);
             break;
-        case '2':
-            system("cls");
+        case '2':          // to delete a transaction
+            system("cls"); // clears screen and starts by printing the message given below
             printf("==========DELETE A TRANSACTION ENTRY==========\n\n");
             deleteRowFromTable("transactions_dat", "Transaction List\nNo|Transaction Details\n", "Enter Transaction No : ", "Enter a valid transaction No\n");
             print_menu(1);
             break;
-        case '3':
-            system("cls");
+        case '3':          // to report all transactions
+            system("cls"); // clears screen and starts by printing the message given below
             printf("==========REPORTING ALL TRANSACTIONS==========\n");
             reportTransactions("transactions_dat", "", "", "", 0);
             print_menu(1);
             break;
-        case '4':
-            system("cls");
+        case '4':          // to report all transactions of a particular member
+            system("cls"); // clears screen and starts by printing the message given below
             printf("==========REPORTING TRANSACTIONS OF A MEMBER==========\n\n");
             reportTransactions("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n", 1);
             print_menu(1);
             break;
-        case '5':
-            system("cls");
+        case '5':          // to report all transactions of a particular category
+            system("cls"); // clears screen and starts by printing the message given below
             printf("==========REPORTING TRANSACTIONS OF A CATEGORY==========\n\n");
             reportTransactions("category_dat", "\nNo|Category Name\n", "Enter Category No : ", " Enter a valid category No\n", 1);
             print_menu(1);
             break;
-        case '6':
-            system("cls");
+        case '6':          // to add a new member
+            system("cls"); // clears screen and starts by printing the message given below
             printf("==========NEW MEMBER ENTRY==========\n\n");
             acceptNewMemberOrCategoryData("Member name :", "member_dat", "MEMBER_KEY");
             print_menu(1);
             break;
-        case '7':
-            system("cls");
+        case '7':          // to delete a member
+            system("cls"); // clears screen and starts by printing the message given below
             printf("==========DELETE A MEMBER==========\n\n");
             deleteRowFromTable("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n");
             print_menu(1);
             break;
-        case '8':
-            system("cls");
+        case '8':          // to add a new category
+            system("cls"); // clears screen and starts by printing the message given below
             printf("==========NEW CATEGORY ENTRY==========\n\n");
             acceptNewMemberOrCategoryData("Category name :", "category_dat", "CATEGORY_KEY");
             print_menu(1);
             break;
-        case '9':
-            system("cls");
+        case '9':          // to delete a category
+            system("cls"); // clears screen and starts by printing the message given below
             printf("==========DELETE A CATEGORY==========\n\n");
             deleteRowFromTable("category_dat", "\nNo|Category Name\n", "Enter Category No : ", "Enter a valid Category No\n");
             print_menu(1);
@@ -131,7 +109,7 @@ int main_menu_with_loop()
             break;
         }
 
-    } while (a != 'X' && a != 'x');
+    } while (a != 'X' && a != 'x'); // exits from the program execution
     printf("Bye!!!");
     return 0;
 }
