@@ -155,13 +155,14 @@ bool _checkAmountGtZero(double dbl, char *error)
         return true;
     }
 }
-void _printAllCategoriesOrMembers(char *fileName, char *label)
+void _printAllRowsFromFileWithLabel(char *fileName, char *label, int linesize)
 {
     printf(label);
     FILE *fp;
     fp = fopen(fileName, "r");
-    char line[80];
+    char line[linesize];
     // Read and print each line
+
     while (fgets(line, sizeof(line), fp))
     {
         printf("%s", line);
@@ -169,21 +170,20 @@ void _printAllCategoriesOrMembers(char *fileName, char *label)
     fclose(fp);
 }
 
-char *_checkCatgoryOrMember(char *input, char *fileName, char *errorMessage)
+char *_getValueCorrespondingToEnteredId(char *input, char *fileName, char *errorMessage)
 {
 
     char *a = "NOT_FOUND";
     int inputVal = 0;
     // read the category id from user input
     sscanf(input, "%d", &inputVal);
-
     FILE *file;
     file = fopen(fileName, "r");
     char line[1000];
     while (fgets(line, sizeof(line), file))
     {
         int no = 0;
-        char name[50];
+        char name[255];
         sscanf(line, "%d|%255[^\n]", &no, name);
         if (inputVal == no)
         {
@@ -199,20 +199,20 @@ char *_checkCatgoryOrMember(char *input, char *fileName, char *errorMessage)
     }
     return a;
 }
-char *_safelyReturnMemberOrCategory(char *file, char *prompt1, char *prompt2, char *error)
+char *_safelyReturnValidTableRowValue(char *file, char *prompt1, char *prompt2, char *error)
 {
-    _printAllCategoriesOrMembers(file, prompt1);
+    _printAllRowsFromFileWithLabel(file, prompt1, 255);
     printf("\n");
-    char enteredMember[50];
+    char enteredId[50];
     char *tempSelectedVal;
     do
     {
         printf(prompt2);
-        gets(enteredMember);
+        gets(enteredId);
         // Remove the trailing newline character from the user input
-        enteredMember[strcspn(enteredMember, "\n")] = '\0';
+        enteredId[strcspn(enteredId, "\n")] = '\0';
 
-        tempSelectedVal = _checkCatgoryOrMember(enteredMember, file, error);
+        tempSelectedVal = _getValueCorrespondingToEnteredId(enteredId, file, error);
 
     } while (tempSelectedVal == "NOT_FOUND");
     return tempSelectedVal;
@@ -234,12 +234,12 @@ int acceptDataForNewTransaction()
 
     char amountString[20];
     char enteredCategory[50];
-
+    system("cls");
+    printf("\t\t===============New Transaction Entry===============\n");
     do
     {
         printf("Date [DD/MM/YYYY] : ");
         gets(record.date);
-
     } while (!_validateDate(record.date, "Please enter a valid transaction date"));
 
     printf("Description :");
@@ -259,25 +259,13 @@ int acceptDataForNewTransaction()
         record.amount = strtod(amountString, NULL);
     } while (!_checkAmountGtZero(record.amount, "Transaction should be more than zero"));
 
-    // _printAllCategoriesOrMembers("category_dat", "\nNo|Category Name\n");
-    // printf("\n");
+    tempSelectedVal = _safelyReturnValidTableRowValue("category_dat", "\nNo|Category Name\n", "Enter category No : ", "Enter a valid category No\n");
 
-    // do
-    // {
-    //     printf("Enter category No : ");
-    //     gets(enteredCategory);
-    //     // Remove the trailing newline character from the user input
-    //     enteredCategory[strcspn(enteredCategory, "\n")] = '\0';
-    //     tempSelectedVal = _checkCatgoryOrMember(enteredCategory, "category_dat", "Enter a valid category No\n");
-
-    // } while (tempSelectedVal == "NOT_FOUND");
-    tempSelectedVal = _safelyReturnMemberOrCategory("category_dat", "\nNo|Category Name\n", "Enter category No : ", "Enter a valid category No\n");
-
-    sscanf(tempSelectedVal, "%s", record.category_name);
+    sscanf(tempSelectedVal, "%255[^\n]", record.category_name);
     printf("Category selected:%s\n", record.category_name);
 
-    tempSelectedVal = _safelyReturnMemberOrCategory("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n");
-    sscanf(tempSelectedVal, "%s", record.member_name);
+    tempSelectedVal = _safelyReturnValidTableRowValue("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n");
+    sscanf(tempSelectedVal, "%255[^\n]", record.member_name);
 
     printf("Member selected:%s\n", record.member_name);
 
@@ -295,6 +283,7 @@ int acceptDataForNewTransaction()
     {
         printf("\nDiscarded..\n");
     }
+
     return 0;
 }
 
@@ -307,13 +296,14 @@ int acceptNewMemberOrCategoryData(char *label, char *file, char *keyFileName)
     return 0;
 }
 
-int deleteMemberOrCategory(char *file, char *prompt1, char *prompt2, char *error)
+int deleteRowFromTable(char *file, char *prompt1, char *prompt2, char *error)
 {
     int deletedCount = 0, count = 0;
 
-    char *tempSelectedVal = _safelyReturnMemberOrCategory(file, prompt1, prompt2, error);
+    char *tempSelectedVal = _safelyReturnValidTableRowValue(file, prompt1, prompt2, error);
+
     // temp selected value could be  either the membername or category name.
-    char selectedName[50];
+    char selectedName[255];
     sscanf(tempSelectedVal, "%255[^\n]", selectedName);
 
     printf("\nAre you sure the remove %s (Y/N) ?", selectedName);
@@ -329,7 +319,7 @@ int deleteMemberOrCategory(char *file, char *prompt1, char *prompt2, char *error
         while (fgets(line, sizeof(line), fp_input))
         {
             int no = 0;
-            char name[50];
+            char name[255];
             sscanf(line, "%d|%255[^\n]", &no, name);
             printf("Name:%s\n", name);
             printf("SelectedName:%s\n", selectedName);
@@ -355,5 +345,63 @@ int deleteMemberOrCategory(char *file, char *prompt1, char *prompt2, char *error
         deletedCount = -1;
     }
     printf(" Deleted %d record(s)\n", deletedCount);
+    return 0;
+}
+long dateStringToLongValue(char *str)
+{
+    int day, month, year;
+    sscanf(str, "%d/%d/%d", &day, &month, &year);
+    long result = year * 10000L + month * 100L + day;
+    return result;
+}
+bool _checkIfTransactionDateBetween(char *line, long stDateLong, long endDateLong)
+{
+    char transactionDate[20], tempVar;
+    int tempNo;
+    sscanf(line, "%d|%s|%255[^\n]", &tempNo, transactionDate, tempVar);
+    long transDateLong = dateStringToLongValue(transactionDate);
+
+    return transDateLong > stDateLong && transDateLong < endDateLong;
+}
+
+// TODO Make this function name as report Transactions and pass a flag, check flag for all transactions.
+int reportTransactionsOfAMemberOrCategory(char *file, char *prompt1, char *prompt2, char *error)
+{
+    char tempValue[255];
+
+    // if flag
+    char *tempSelectedVal = _safelyReturnValidTableRowValue(file, prompt1, prompt2, error);
+    sscanf(tempSelectedVal, "%255[^\n]", tempValue);
+    // else
+    // sscanf("", "%s", tempValue);
+
+    char stDate[20] = "";
+    do
+    {
+        printf("Start Date [DD/MM/YYYY] (01/01/1900): ");
+        gets(stDate);
+        if (strlen(stDate) == 0)
+            strcpy(stDate, "01/01/1900");
+    } while (!_validateDate(stDate, "Please enter a valid start date"));
+
+    char endDate[20] = "";
+    do
+    {
+        printf("End Date [DD/MM/YYYY] (31/12/9999): ");
+        gets(endDate);
+        if (strlen(endDate) == 0)
+            strcpy(endDate, "31/12/9999");
+    } while (!_validateDate(stDate, "Please enter a valid end date"));
+
+    // TODO Concat pipes infornt and behind of tempValue
+    FILE *fp;
+    fp = fopen("transactions_dat", "r");
+    char line[1000];
+    while (fgets(line, sizeof(line), fp))
+    {
+        if (strstr(line, tempValue) != NULL && _checkIfTransactionDateBetween(line, dateStringToLongValue(stDate), dateStringToLongValue(endDate)))
+            printf("%s", line);
+    }
+    fclose(fp);
     return 0;
 }

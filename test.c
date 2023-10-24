@@ -25,9 +25,16 @@
 
 */
 
-int print_menu()
+int print_menu(int flag)
 {
-    printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",
+    if (flag == 1)
+    {
+        printf("Please any key to continue....");
+        getch();
+    }
+
+    system("cls");
+    printf("\n%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",
            201, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 187);
 
     printf("%c Transactions                  %c\n", 186, 186);
@@ -59,7 +66,7 @@ int print_menu()
 
 int main_menu_with_loop()
 {
-    print_menu();
+    print_menu(0);
     int a = 0;
     do
     {
@@ -68,33 +75,40 @@ int main_menu_with_loop()
         {
         case '1':
             acceptDataForNewTransaction();
-            print_menu();
+            print_menu(1);
             break;
         case '2':
+            // TODO change the method name to a generic one
+            deleteRowFromTable("transactions_dat", "Transaction List\nNo|Transaction Details\n", "Enter Transaction No : ", "Enter a valid transaction No\n");
+            print_menu(1);
             break;
         case '3':
+            _printAllRowsFromFileWithLabel("transactions_dat", "Transaction List\nNo|Transaction Details\n", 255);
+            print_menu(1);
             break;
         case '4':
+            reportTransactionsOfAMemberOrCategory("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n");
+            print_menu(1);
             break;
         case '5':
+            reportTransactionsOfAMemberOrCategory("category_dat", "\nNo|Category Name\n", "Enter Category No : ", " Enter a valid category No\n");
+            print_menu(1);
             break;
         case '6':
             acceptNewMemberOrCategoryData("Member name :", "member_dat", "MEMBER_KEY");
-            print_menu();
+            print_menu(1);
             break;
         case '7':
-            printf("Here11");
-            deleteMemberOrCategory("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n");
-
-            print_menu();
+            deleteRowFromTable("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n");
+            print_menu(1);
             break;
         case '8':
             acceptNewMemberOrCategoryData("Category name :", "category_dat", "CATEGORY_KEY");
-            print_menu();
+            print_menu(1);
             break;
         case '9':
-            deleteMemberOrCategory("category_dat", "\nNo|Category Name\n", "Enter Category No : ", "Enter a valid Category No\n");
-            print_menu();
+            deleteRowFromTable("category_dat", "\nNo|Category Name\n", "Enter Category No : ", "Enter a valid Category No\n");
+            print_menu(1);
             break;
         default:
             break;
