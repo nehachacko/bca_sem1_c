@@ -57,7 +57,7 @@ int print_menu(int flag)
     printf("%c                               %c\n", 186, 186);
     printf("%c X. Exit                       %c\n", 186, 186);
 
-    printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",
+    printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n\n",
            200, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 188);
     printf("Choose an option....\n");
 
@@ -74,39 +74,56 @@ int main_menu_with_loop()
         switch (a)
         {
         case '1':
+            system("cls");
+            printf("==========NEW TRANSACTION ENTRY==========\n\n");
             acceptDataForNewTransaction();
             print_menu(1);
             break;
         case '2':
-            // TODO change the method name to a generic one
+            system("cls");
+            printf("==========DELETE A TRANSACTION ENTRY==========\n\n");
             deleteRowFromTable("transactions_dat", "Transaction List\nNo|Transaction Details\n", "Enter Transaction No : ", "Enter a valid transaction No\n");
             print_menu(1);
             break;
         case '3':
-            _printAllRowsFromFileWithLabel("transactions_dat", "Transaction List\nNo|Transaction Details\n", 255);
+            system("cls");
+            printf("==========REPORTING ALL TRANSACTIONS==========\n");
+            reportTransactions("transactions_dat", "", "", "", 0);
             print_menu(1);
             break;
         case '4':
-            reportTransactionsOfAMemberOrCategory("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n");
+            system("cls");
+            printf("==========REPORTING TRANSACTIONS OF A MEMBER==========\n\n");
+            reportTransactions("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n", 1);
             print_menu(1);
             break;
         case '5':
-            reportTransactionsOfAMemberOrCategory("category_dat", "\nNo|Category Name\n", "Enter Category No : ", " Enter a valid category No\n");
+            system("cls");
+            printf("==========REPORTING TRANSACTIONS OF A CATEGORY==========\n\n");
+            reportTransactions("category_dat", "\nNo|Category Name\n", "Enter Category No : ", " Enter a valid category No\n", 1);
             print_menu(1);
             break;
         case '6':
+            system("cls");
+            printf("==========NEW MEMBER ENTRY==========\n\n");
             acceptNewMemberOrCategoryData("Member name :", "member_dat", "MEMBER_KEY");
             print_menu(1);
             break;
         case '7':
+            system("cls");
+            printf("==========DELETE A MEMBER==========\n\n");
             deleteRowFromTable("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n");
             print_menu(1);
             break;
         case '8':
+            system("cls");
+            printf("==========NEW CATEGORY ENTRY==========\n\n");
             acceptNewMemberOrCategoryData("Category name :", "category_dat", "CATEGORY_KEY");
             print_menu(1);
             break;
         case '9':
+            system("cls");
+            printf("==========DELETE A CATEGORY==========\n\n");
             deleteRowFromTable("category_dat", "\nNo|Category Name\n", "Enter Category No : ", "Enter a valid Category No\n");
             print_menu(1);
             break;

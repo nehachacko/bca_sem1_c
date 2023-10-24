@@ -174,9 +174,11 @@ char *_getValueCorrespondingToEnteredId(char *input, char *fileName, char *error
 {
 
     char *a = "NOT_FOUND";
-    int inputVal = 0;
+    int inputVal = -1;
     // read the category id from user input
+
     sscanf(input, "%d", &inputVal);
+
     FILE *file;
     file = fopen(fileName, "r");
     char line[1000];
@@ -185,6 +187,7 @@ char *_getValueCorrespondingToEnteredId(char *input, char *fileName, char *error
         int no = 0;
         char name[255];
         sscanf(line, "%d|%255[^\n]", &no, name);
+
         if (inputVal == no)
         {
             fclose(file);
@@ -220,6 +223,9 @@ char *_safelyReturnValidTableRowValue(char *file, char *prompt1, char *prompt2, 
 
 int acceptDataForNewTransaction()
 {
+    system("cls");
+    printf("==========NEW TRANSACTION ENTRY==========\n\n");
+
     struct TransactionRecord record;
     record.transaction_id = 0;
     record.amount = 0;
@@ -234,8 +240,6 @@ int acceptDataForNewTransaction()
 
     char amountString[20];
     char enteredCategory[50];
-    system("cls");
-    printf("\t\t===============New Transaction Entry===============\n");
     do
     {
         printf("Date [DD/MM/YYYY] : ");
@@ -347,33 +351,43 @@ int deleteRowFromTable(char *file, char *prompt1, char *prompt2, char *error)
     printf(" Deleted %d record(s)\n", deletedCount);
     return 0;
 }
+long ddMmYyToLongValue(int year, int month, int day)
+{
+    long result = year * 10000L + month * 100L + day;
+    return result;
+}
+
 long dateStringToLongValue(char *str)
 {
     int day, month, year;
     sscanf(str, "%d/%d/%d", &day, &month, &year);
-    long result = year * 10000L + month * 100L + day;
-    return result;
+    return ddMmYyToLongValue(year, month, day);
 }
+
 bool _checkIfTransactionDateBetween(char *line, long stDateLong, long endDateLong)
 {
-    char transactionDate[20], tempVar;
-    int tempNo;
-    sscanf(line, "%d|%s|%255[^\n]", &tempNo, transactionDate, tempVar);
-    long transDateLong = dateStringToLongValue(transactionDate);
+    char transactionDate[20], tempVar[255];
+    int tempNo, d, m, y;
+    sscanf(line, "%d|%d/%d/%d|%s|", &tempNo, &d, &m, &y, tempVar);
+    long transDateLong = ddMmYyToLongValue(y, m, d);
 
     return transDateLong > stDateLong && transDateLong < endDateLong;
 }
 
 // TODO Make this function name as report Transactions and pass a flag, check flag for all transactions.
-int reportTransactionsOfAMemberOrCategory(char *file, char *prompt1, char *prompt2, char *error)
+void reportTransactions(char *file, char *prompt1, char *prompt2, char *error, int flag)
 {
     char tempValue[255];
 
-    // if flag
-    char *tempSelectedVal = _safelyReturnValidTableRowValue(file, prompt1, prompt2, error);
-    sscanf(tempSelectedVal, "%255[^\n]", tempValue);
-    // else
-    // sscanf("", "%s", tempValue);
+    if (flag == 1)
+    {
+        char *tempSelectedVal = _safelyReturnValidTableRowValue(file, prompt1, prompt2, error);
+        sscanf(tempSelectedVal, "%255[^\n]", tempValue);
+    }
+    else
+    {
+        sscanf("|", "%s", tempValue);
+    }
 
     char stDate[20] = "";
     do
@@ -403,5 +417,4 @@ int reportTransactionsOfAMemberOrCategory(char *file, char *prompt1, char *promp
             printf("%s", line);
     }
     fclose(fp);
-    return 0;
 }
