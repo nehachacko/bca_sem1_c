@@ -338,7 +338,7 @@ int deleteRowFromTable(char *file, char *prompt1, char *prompt2, char *error)
     }
     if (deletedCount > 0)
     {
-        printf(" Deleted %d record(s)\n", deletedCount); // prints the number of records that were deleted
+        printf(" \n\nDeleted %d record(s)\n", deletedCount); // prints the number of records that were deleted
     }
     return 0;
 }
@@ -413,7 +413,7 @@ void reportTransactions(char *file, char *prompt1, char *prompt2, char *error, i
         if (strlen(endDate) == 0)
             strcpy(endDate, "31/12/9999");                             // if no end date is provided by the user, 31/12/9999 is set as the end date
     } while (!_validateDate(stDate, "Please enter a valid end date")); // inputs dates from the user till a valid date is entered or no date is entered
-
+    printf("\n");
     FILE *fp;
     fp = fopen("transactions_dat", "r");
     char line[1000];
