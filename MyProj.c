@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <conio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
@@ -6,8 +7,9 @@
 
 int getKeyValueAndIncrementNSave(char *key_name)
 {
-    // used to add ids to each of the records in all three files,that is,transactions_dat,member_dat and category_name
-    //'key_name' is the name of the file
+    /*
+    used to add ids to each of the records in all three files,that is,transactions_dat,member_dat and category_name
+    'key_name' is the name of the file */
     FILE *fp;
     int val = 0; // the first time the function is called, 0 is appended and 1 is written into the file
     fp = fopen(key_name, "r");
@@ -21,7 +23,7 @@ int getKeyValueAndIncrementNSave(char *key_name)
 
 struct TransactionRecord
 {
-    // describes the structure of an individual record in the transaction file
+    /* describes the structure of an individual record in the transaction file */
     int transaction_id;
     char date[15];
     char description[100];
@@ -33,6 +35,7 @@ struct TransactionRecord
 
 int saveAndAppendTransactions(struct TransactionRecord a_record)
 {
+    /*  Save and append a transaction into the file */
     FILE *fp;
     fp = fopen("transactions_dat", "a+");                    // opens the file 'transactions_dat' in append mode
     fprintf(fp, "%d|%s|%s|%c|%.2lf|%s|%s|\n",                // writes 'a_record' to the file 'transactions_dat'
@@ -49,7 +52,7 @@ int saveAndAppendTransactions(struct TransactionRecord a_record)
 
 int printTransactionRecord(struct TransactionRecord a_record)
 {
-    // used for printing the contents of the variable 'a_record' which is of the type struct TransactionRecord
+    /* used for printing the contents of the variable 'a_record' which is of the type struct TransactionRecord */
     printf("Date:%s\nDescription:%s\nIncome/Expense:%c\nAmount:%.2lf\nCategory Name:%s\nMember Name:%s\n",
            a_record.date,
            a_record.description,
@@ -62,16 +65,18 @@ int printTransactionRecord(struct TransactionRecord a_record)
 
 struct memberOrCategoryRecord
 {
-    // describes the structure of an individual record in the member or category file
+    /* describes the structure of an individual record in the member or category file */
     int id;
     char name[50];
 };
 
 int appendNewMemberOrCategory(char *file, char *keyFileName, struct memberOrCategoryRecord a_record)
 {
-    //'file' indicate if the record need to be written into 'member_dat' or 'category_dat'
-    //'keyFileName' is used to indicate whether to key value to be incremented is in 'MEMBER_KEY' or 'CATEGORY_KEY'
-    //'a_record' is the record to be written into 'file'
+    /*
+    'file' indicate if the record need to be written into 'member_dat' or 'category_dat'
+    'keyFileName' is used to indicate whether to key value to be incremented is in 'MEMBER_KEY' or 'CATEGORY_KEY'
+    'a_record' is the record to be written into 'file'
+    */
     FILE *fp;
     fp = fopen(file, "a+");                            // opens 'file' in append mode
     fprintf(fp, "%d|%s\n",                             // writes 'a_record' to 'file'
@@ -83,12 +88,13 @@ int appendNewMemberOrCategory(char *file, char *keyFileName, struct memberOrCate
 
 bool _isLeapYear(int year)
 {
-    // Checks if a particular year is a leap year. If it is a leap year then 29th of February will be considered a valid date
+    /*Checks if a particular year is a leap year. If it is a leap year then 29th of February will be considered a valid date */
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
 
-bool _validateDate(const char *dateStr, char *error) // Checks if a date is valid,that is, in the form DD/MM/YYYY where the date, month and year have valid values
+bool _validateDate(const char *dateStr, char *error)
 {
+    /* Checks if a date is valid,that is, in the form DD/MM/YYYY where the date, month and year have valid values*/
     int month, day, year;
     if (sscanf(dateStr, "%d/%d/%d", &day, &month, &year) == 3) // Checks if all three, that is, day,month and year are present and if false prints error message
     {
@@ -108,7 +114,7 @@ bool _validateDate(const char *dateStr, char *error) // Checks if a date is vali
 
 bool _isIE(char ch)
 {
-    // Checks is the variable 'ch' is valid, that is either i,I,e or E. If valid, the fuction returns true and if invalid,prints error message and the function returns false
+    /*Checks is the variable 'ch' is valid, that is either i,I,e or E. If valid, the fuction returns true and if invalid,prints error message and the function returns false */
     if (ch == 'I' || ch == 'E' || ch == 'i' || ch == 'e')
         return true;
     else
@@ -120,7 +126,7 @@ bool _isIE(char ch)
 
 bool _checkAmountGtZero(double dbl, char *error)
 {
-    // Checks if the amount entered by user is >0.If true, the function returns true and if false, prints appropriate error message and the function returns false
+    /* Checks if the amount entered by user is >0.If true, the function returns true and if false, prints appropriate error message and the function returns false */
     if (dbl <= 0)
     {
         printf(error);
@@ -134,10 +140,12 @@ bool _checkAmountGtZero(double dbl, char *error)
 }
 void _printAllRowsFromFileWithLabel(char *fileName, char *label, int linesize)
 {
-    // used for printing each record of a file
-    //'fileName' is the file from which the contents are to be printed
-    //'label' is the message to be printed before displaying the contents of the file
-    //'linesize' is the maximum size of the character array 'line' which stores each record of a file
+    /*
+     used for printing each record of a file
+    'fileName' is the file from which the contents are to be printed
+    'label' is the message to be printed before displaying the contents of the file
+    'linesize' is the maximum size of the character array 'line' which stores each record of a file
+    */
     printf(label);
     FILE *fp;
     fp = fopen(fileName, "r");
@@ -153,7 +161,9 @@ void _printAllRowsFromFileWithLabel(char *fileName, char *label, int linesize)
 
 char *_getValueCorrespondingToEnteredId(char *input, char *fileName, char *errorMessage)
 {
-
+    /*
+    checks if an entered id is present in the file, and it returns the rest of the id in  the file if a match is  found otherwise returns NOT_FOUND string
+    */
     char *a = "NOT_FOUND";
     int inputVal = -1;
     sscanf(input, "%d", &inputVal);
@@ -183,11 +193,13 @@ char *_getValueCorrespondingToEnteredId(char *input, char *fileName, char *error
 }
 char *_safelyReturnValidTableRowValue(char *file, char *prompt1, char *prompt2, char *error)
 {
-    // Checks if the entered id of a file is present in the table
-    //'file' is the file to be displayed
-    //'prompt1' is the message to be displayed before printing the contents of 'file'
-    //'prompt2' is the message to be printed to the user for recieving input
-    //'error' is the message to be printed if the entered id is not present in 'file'
+    /*
+     Checks if the entered id of a file is present in the table
+    'file' is the file to be displayed
+    'prompt1' is the message to be displayed before printing the contents of 'file'
+    'prompt2' is the message to be printed to the user for recieving input
+    'error' is the message to be printed if the entered id is not present in 'file'
+    */
     _printAllRowsFromFileWithLabel(file, prompt1, 255);
     printf("\n");
     char enteredId[50];
@@ -207,7 +219,7 @@ char *_safelyReturnValidTableRowValue(char *file, char *prompt1, char *prompt2, 
 
 int acceptDataForNewTransaction()
 {
-    // Used to accept a new transaction record
+    /* Used to accept a new transaction record*/
 
     struct TransactionRecord record;
     record.transaction_id = 0;
@@ -228,35 +240,26 @@ int acceptDataForNewTransaction()
         printf("Date [DD/MM/YYYY] : ");
         gets(record.date);
     } while (!_validateDate(record.date, "Please enter a valid transaction date")); // inputs dates from the user till a valid date in entered
-
     printf("Description :");
     gets(record.description);
-
     do
     {
         printf("Income/Expense[I/E] : ");
         record.income_expense = toupper(getche());
         // getch(); // This is a hack
     } while (!_isIE(record.income_expense)); // accepts input from the user till the valid input is entered, that is , i,I,e or E is entered
-
     do
     {
         printf("\nAmount :");
         gets(amountString);
         record.amount = strtod(amountString, NULL);
-    } while (!_checkAmountGtZero(record.amount, "Transaction should be more than zero")); // accepts input from the user till an amount >0 is entered
-
+    } while (!_checkAmountGtZero(record.amount, "Transaction should be more than zero"));                                                             // accepts input from the user till an amount >0 is entered
     tempSelectedVal = _safelyReturnValidTableRowValue("category_dat", "\nNo|Category Name\n", "Enter category No : ", "Enter a valid category No\n"); // tempSelectedVal will be the category name
-
-    sscanf(tempSelectedVal, "%255[^\n]", record.category_name); // reads category_name to the structure 'record'
+    sscanf(tempSelectedVal, "%255[^\n]", record.category_name);                                                                                       // reads category_name to the structure 'record'
     printf("Category selected:%s\n", record.category_name);
-
     tempSelectedVal = _safelyReturnValidTableRowValue("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n"); // tempSelectedVal will be the member name
-
-    sscanf(tempSelectedVal, "%255[^\n]", record.member_name); // reads member_name to the structure
-    printf("Member selected:%s\n", record.member_name);
-
-    printf("\n\n");
+    sscanf(tempSelectedVal, "%255[^\n]", record.member_name);                                                                                 // reads member_name to the structure
+    printf("Member selected:%s\n\n\n", record.member_name);
     printTransactionRecord(record);                        // displays the data in 'record'
     printf("\nAre you sure the above transacton (Y/N) ?"); // confirms is the displayed data can be read to the file
     char yn = 'y';
@@ -276,28 +279,32 @@ int acceptDataForNewTransaction()
 
 int acceptNewMemberOrCategoryData(char *label, char *file, char *keyFileName)
 {
-    // Used to accept a new member or category record
-    //'label' is the message to be printed for getting the member or category name from the user
-    //'file' is used to indicate whether the record to be added is to 'member_dat' or 'category_dat'
-    //'keyFileName' is used to indicate whether to key value to be incremented is in 'MEMBER_KEY' or 'CATEGORY_KEY'
+    /* Used to accept a new member or category record
+    'label' is the message to be printed for getting the member or category name from the user
+    'file' is used to indicate whether the record to be added is to 'member_dat' or 'category_dat'
+    'keyFileName' is used to indicate whether to key value to be incremented is in 'MEMBER_KEY' or 'CATEGORY_KEY'
+    */
     struct memberOrCategoryRecord record;
     printf(label);
     gets(record.name);
     appendNewMemberOrCategory(file, keyFileName, record);
+    printf("\nSuccessfully Added\n");
     return 0;
 }
 
 int deleteRowFromTable(char *file, char *prompt1, char *prompt2, char *error)
 {
-    // used to delete a particular row from a file based on the record id
+    /*used to delete a particular row from a file based on the record id
+    'file' is the file to be displayed
+    'prompt1' is the message to be displayed before printing the contents of 'file'
+    'prompt2' is the message to be printed to the user for recieving input about the id to be removed
+    'error' is the message to be printed if the entered id is not present in 'file'
+    */
     int deletedCount = 0, count = 0;
 
-    char *tempSelectedVal = _safelyReturnValidTableRowValue(file, prompt1, prompt2, error); // tempSelectedVal is the content of the record except for the id
     //'_safelyReturnValidTableRowValue' is used to check if the id (of the record to be deleted) inputed from the user is a valid id
-    //'file' is the file to be displayed
-    //'prompt1' is the message to be displayed before printing the contents of 'file'
-    //'prompt2' is the message to be printed to the user for recieving input about the id to be removed
-    //'error' is the message to be printed if the entered id is not present in 'file'
+    char *tempSelectedVal = _safelyReturnValidTableRowValue(file, prompt1, prompt2, error); // tempSelectedVal is the content of the record except for the id
+
     char selectedName[255];                             //'selectedName' is the content of the record whose id is selected except for the id itself
     sscanf(tempSelectedVal, "%255[^\n]", selectedName); // since tempSelectedVal is a string pointer, its contents are written into a fized array 'selectedName'
 
@@ -344,14 +351,14 @@ int deleteRowFromTable(char *file, char *prompt1, char *prompt2, char *error)
 }
 long ddMmYyToLongValue(int year, int month, int day)
 {
-    // used to find the long value of a date when the value of the year,month and day are given
+    /*used to find the long value of a date when the value of the year,month and day are given*/
     long result = year * 10000L + month * 100L + day;
     return result;
 }
 
 long dateStringToLongValue(char *str)
 {
-    // used to obtain 3 numbers each representing the day,month and year from a date string of the form DD/MM/YYYY
+    /*used to obtain 3 numbers each representing the day,month and year from a date string of the form DD/MM/YYYY*/
     int day, month, year;
     sscanf(str, "%d/%d/%d", &day, &month, &year);
     return ddMmYyToLongValue(year, month, day);
@@ -359,10 +366,12 @@ long dateStringToLongValue(char *str)
 
 bool _checkIfTransactionDateBetween(char *line, long stDateLong, long endDateLong)
 {
-    // used to check if the date obtained from a record falls between a given start and end date
-    //'line' is the record from which the date is to be obtained
-    //'stDateLong' is the long value of the start date
-    //'endDateLong' is the long value of the end date
+    /*
+    used to check if the date obtained from a record falls between a given start and end date
+    'line' is the record from which the date is to be obtained
+    'stDateLong' is the long value of the start date
+    'endDateLong' is the long value of the end date
+    */
     char transactionDate[20], tempVar[255];
     int tempNo, d, m, y;
     sscanf(line, "%d|%d/%d/%d|%s|", &tempNo, &d, &m, &y, tempVar); // the day,month and year is read into d,m and y respectively
@@ -373,7 +382,7 @@ bool _checkIfTransactionDateBetween(char *line, long stDateLong, long endDateLon
 
 void reportTransactions(char *file, char *prompt1, char *prompt2, char *error, int flag)
 {
-    // Used for printing transactions between a start and end date
+    /* Used for printing transactions between a start and end date */
     char memberOrCategoryName[255];
     char tempValue[255] = "|";
 
@@ -424,4 +433,127 @@ void reportTransactions(char *file, char *prompt1, char *prompt2, char *error, i
             printf("%s", line);
     }
     fclose(fp);
+}
+
+int printMenu(int flag)
+{
+    /* prints menu */
+    if (flag == 1) // if flag is 1,at the end of the screen a message is printed to press any key to continue
+    {
+        printf("Please any key to continue....");
+        getch();
+    }
+
+    system("cls"); // clears screen before printing the menu
+    printf("\n%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",
+           201, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 187);
+    printf("%c MAIN MENU                     %c\n", 186, 186);
+    // printf("%c                               %c\n", 186, 186);
+    printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",
+           204, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 185);
+    printf("%c                               %c\n", 186, 186);
+    printf("%c Transactions                  %c\n", 186, 186);
+
+    printf("%c                               %c\n", 186, 186);
+    printf("%c 1.Enter a new transaction     %c\n", 186, 186);
+    printf("%c 2.Delete a transaction        %c\n", 186, 186);
+    printf("%c                               %c\n", 186, 186);
+    printf("%c Reports                       %c\n", 186, 186);
+    printf("%c                               %c\n", 186, 186);
+    printf("%c 3.All records                 %c\n", 186, 186);
+    printf("%c 4.Transactions of a member    %c\n", 186, 186);
+    printf("%c 5.Transactions of a catergory %c\n", 186, 186);
+    printf("%c                               %c\n", 186, 186);
+    printf("%c Setup                         %c\n", 186, 186);
+    printf("%c                               %c\n", 186, 186);
+    printf("%c 6.Add a new member            %c\n", 186, 186);
+    printf("%c 7.Delete a member name        %c\n", 186, 186);
+    printf("%c 8.Add a new category          %c\n", 186, 186);
+    printf("%c 9.Delete a category name      %c\n", 186, 186);
+    printf("%c                               %c\n", 186, 186);
+    printf("%c X. Exit                       %c\n", 186, 186);
+
+    printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n\n",
+           200, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 188);
+    printf("Choose an option....\n");
+
+    return 0;
+}
+
+int main_menu_with_loop()
+{
+    printMenu(0);
+    int a = 0;
+    do
+    {
+        a = getch(); // inputs which operation is to be performed
+        switch (a)
+        {
+        case '1':          // to enter a new transaction
+            system("cls"); // clears screen and starts by printing the message given below
+            printf("==========NEW TRANSACTION ENTRY==========\n\n");
+            acceptDataForNewTransaction();
+            printMenu(1);
+            break;
+        case '2':          // to delete a transaction
+            system("cls"); // clears screen and starts by printing the message given below
+            printf("==========DELETE A TRANSACTION ENTRY==========\n\n");
+            deleteRowFromTable("transactions_dat", "Transaction List\nNo|Transaction Details\n", "Enter Transaction No : ", "Enter a valid transaction No\n");
+            printMenu(1);
+            break;
+        case '3':          // to report all transactions
+            system("cls"); // clears screen and starts by printing the message given below
+            printf("==========REPORTING ALL TRANSACTIONS==========\n");
+            reportTransactions("transactions_dat", "", "", "", 0);
+            printMenu(1);
+            break;
+        case '4':          // to report all transactions of a particular member
+            system("cls"); // clears screen and starts by printing the message given below
+            printf("==========REPORTING TRANSACTIONS OF A MEMBER==========\n\n");
+            reportTransactions("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n", 1);
+            printMenu(1);
+            break;
+        case '5':          // to report all transactions of a particular category
+            system("cls"); // clears screen and starts by printing the message given below
+            printf("==========REPORTING TRANSACTIONS OF A CATEGORY==========\n\n");
+            reportTransactions("category_dat", "\nNo|Category Name\n", "Enter Category No : ", " Enter a valid category No\n", 1);
+            printMenu(1);
+            break;
+        case '6':          // to add a new member
+            system("cls"); // clears screen and starts by printing the message given below
+            printf("==========NEW MEMBER ENTRY==========\n\n");
+            acceptNewMemberOrCategoryData("Member name :", "member_dat", "MEMBER_KEY");
+            printMenu(1);
+            break;
+        case '7':          // to delete a member
+            system("cls"); // clears screen and starts by printing the message given below
+            printf("==========DELETE A MEMBER==========\n\n");
+            deleteRowFromTable("member_dat", "\nNo|Member Name\n", "Enter Member No : ", "Enter a valid member No\n");
+            printMenu(1);
+            break;
+        case '8':          // to add a new category
+            system("cls"); // clears screen and starts by printing the message given below
+            printf("==========NEW CATEGORY ENTRY==========\n\n");
+            acceptNewMemberOrCategoryData("Category name :", "category_dat", "CATEGORY_KEY");
+            printMenu(1);
+            break;
+        case '9':          // to delete a category
+            system("cls"); // clears screen and starts by printing the message given below
+            printf("==========DELETE A CATEGORY==========\n\n");
+            deleteRowFromTable("category_dat", "\nNo|Category Name\n", "Enter Category No : ", "Enter a valid Category No\n");
+            printMenu(1);
+            break;
+        default:
+            break;
+        }
+
+    } while (a != 'X' && a != 'x'); // exits from the program execution
+    printf("Bye!!!");
+    return 0;
+}
+
+int main()
+{
+    main_menu_with_loop();
+    return 0;
 }

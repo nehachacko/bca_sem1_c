@@ -1,9 +1,13 @@
-1|10/10/2023|ADAS DAS|I|2343.33|Going|Nethan Chacko|
-2|10/10/2024|ADAS DAS|I|2343.33|Going|Nethan Chacko|
-3|10/10/2024|This is a test|E|333.30|Utility|Nethan|
-4|10/10/2023|ADAS DAS|I|2343.33|Going|Nethan Chacko|
-5|10/10/2023|asd asdsa dsa|I|3333.33|Going out|Nethan Chacko|
-6|10/10/2033|This is a sample transaction|I|333.34|Going out|Viju Chacko|
-7|10/01/2003|This is a sample description|I|2333.33|Food|Neha Chacko|
-8|10/11/2033|This is a sample transaction|I|333.32|Going out|Viju Chacko|14|28/02/2023|FDLJSALJDFJ|I|24.00|Medicine|Nethan Chacko|
-9|28/10/2023|sadahfa|E|44230.00|Medicine|Nethan Chacko|
+1|01/10/2023|Tuition fees|E|2000.00|Education|Mary John|
+2|02/10/2023|Salary for the month of October|I|100000.00|Others|John Mathew|
+3|03/10/2023|Grocery shopping for the week|E|730.00|Groceries|Common|
+4|04/10/2023|Electricity bill|E|1000.00|Utilities|Common|
+5|05/10/2023|Water bill|E|400.00|Utilities|Common|
+6|06/10/2023|Movie and dinner|E|2000.00|Entertainment|Common|
+7|07/10/2023|Monthly rent for shop|E|5000.00|Rent|Immanual John|
+8|09/10/2023|Mobile data bill|E|500.00|Phone and Internet|Mary John|
+9|10/10/2023|Bus fees|E|750.00|Transportation|Irene Tresa John|
+10|11/10/2023|Selling bicycle|I|6500.00|Others|Immanual John|
+11|12/10/2023|Brought new chair|E|2000.00|CapEx|Mary John|
+12|13/10/2023|Paying gardener|E|1500.00|Garden|Common|
+13|14/10/2023|Health insurance|E|4000.00|Insurance|Common
